@@ -1,0 +1,451 @@
+
+
+
+
+AI Preferences                                                 K. Kelley
+Internet-Draft                                                 Anthropic
+Intended status: Standards Track                         30 October 2026
+Expires: 3 May 2027
+
+
+              Machine-Readable Training Preference Signal
+         draft-kelley-aipref-training-preference-signal-latest
+
+Abstract
+
+   This document describes how a service operator binds usage
+   preferences (e.g., "no AI training") to paths by writing ordinary
+   robots.txt groups keyed by a per-purpose policy token in the User-
+   Agent line.  It introduces no new directive names and no new grammar:
+   the path language, longest-match precedence, and group structure of
+   robots.txt are not changed.
+
+About This Document
+
+   This note is to be removed before publishing as an RFC.
+
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-kelley-aipref-training-
+   preference-signal/.
+
+   Discussion of this document takes place on the AI Preferences Working
+   Group mailing list (mailto:ai-control@ietf.org), which is archived at
+   https://mailarchive.ietf.org/arch/browse/ai-control/.  Subscribe at
+   https://www.ietf.org/mailman/listinfo/ai-control/.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 3 May 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+     1.1.  Goals
+   2.  Conventions and Definitions
+   3.  Vocabulary
+   4.  Design
+     4.1.  The Policy Token
+     4.2.  Checking for Preferences
+     4.3.  Independence from Crawler Rules
+     4.4.  Effects on Crawling Behavior
+     4.5.  Precedence
+   5.  Security Considerations
+   6.  Privacy Considerations
+   7.  IANA Considerations
+   8.  References
+     8.1.  Normative References
+     8.2.  Informative References
+   Acknowledgments
+   Author's Address
+
+1.  Introduction
+
+   A service operator binds usage preferences (e.g., "no AI training")
+   to paths by writing ordinary robots.txt groups keyed by a per-purpose
+   *policy token* in the User-Agent line.
+
+   User-Agent: __usage_ai-training
+   Disallow: /
+   Allow: /press-kit/
+
+                       Figure 1: A policy-token group
+
+   This expresses a preference _against_ AI training for all paths
+   except those under /press-kit/, for which it expresses a preference
+   _in favor_ (Section 4.2).
+
+   This document introduces no new directive names and no new grammar;
+   the path language, longest-match precedence, and group structure
+   defined by [ROBOTS] are not changed.  As a result, the wide variety
+   of existing parsers deployed across the Internet will continue to
+   interpret traffic management signals as they did previously, and will
+   ignore policy-token groups as they would any group for a user agent
+   they do not recognize.
+
+1.1.  Goals
+
+   1.  *Path-specific bindings.* Preferences can be expressed per path,
+       and not only site-wide (Section 4.2).
+
+   2.  *Minimal distance from RFC 9309.* Semantics, and ideally syntax,
+       stay as close to [ROBOTS] as possible, so that authors and
+       implementers can use the mental model they already have.
+
+   3.  *No large-scale duplication.* robots.txt files are size-
+       constrained (Section 2.5 of [ROBOTS]), and some deployed files
+       already contain heavily duplicated groups.  Expressing
+       preferences does not require restating existing rules
+       (Section 4.1).
+
+   4.  *Unchanged legacy behavior.* A parser or consumer that does not
+       implement this mechanism behaves as before.  This holds for
+       parsers that are actually deployed, not only for idealized RFC
+       9309 parsers.  Conversely, implementations treat files that do
+       not use this mechanism exactly as before (Section 4.2 and
+       Section 4.3).
+
+   5.  *Consistent interpretation across consumers.* This mechanism does
+       not depend on the divergent parts of deployed parser behavior
+       (Section 4.1).
+
+2.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+   service operator:  An entity that operates an HTTP service, such as a
+      website, and publishes a robots.txt file for it.  For preferences
+      expressed through this mechanism, the service operator is the
+      "declaring party" (Section 2 of [VOCAB]).  [ROBOTS] calls this
+      party a "service owner".
+
+   consumer:  An entity that interprets preference signals that a
+      service operator expresses through the mechanism defined in this
+      document.
+
+   parser:  In the sense of [ROBOTS]; software that parses robots.txt
+      files and matches product tokens and paths against their rules.
+
+   policy token:  A product token (Section 2.2.1 of [ROBOTS]) whose RFC
+      9309 signals a consumer uses to determine how content will be
+      used.  A policy token need not appear in the User-Agent header
+      field (Section 10.1.5 of [HTTP]) of any outbound request.  This
+      document introduces a new, cross-vendor policy token
+      (Section 4.1).
+
+   proprietary policy token:  A policy token documented by a single
+      consumer.  Some service operators already include these in their
+      robots.txt files.
+
+3.  Vocabulary
+
+   The __usage_ai-training policy token corresponds to the definition
+   that the IETF aipref Working Group has arrived at (Section 4.1 of
+   [VOCAB]).  The following definitions are quoted from that document:
+
+   AI Training:  Using an asset to modify the learned parameters of a
+      generative AI model.
+
+      The training of models that are used to perform exclusively non-
+      generative tasks is not included in this category, even if the
+      model is capable of generative tasks.
+
+   Generative AI model:  An AI model that is used to generate synthetic
+      content in one or more modalities.  Alternatively, an AI model
+      that is made available for use to generate synthetic content in
+      one or more modalities.  This definition does not include a model
+      that is used, or made available for use, for classification,
+      ranking, or scoring, even where the model generates rationale for
+      its output.
+
+   This document applies those definitions as follows:
+
+   asset:  The content retrieved from a path.  The preferences that
+      apply to an asset are those expressed in the robots.txt file in
+      effect when the asset was retrieved (Section 2.4 of [ROBOTS]; see
+      also [ATTACH]).
+
+   This document does not define a parallel vocabulary; it tracks the
+   work of the aipref Working Group.  Implementers SHOULD consider
+   updating their definitions, and adding or removing vocabulary terms,
+   as the aipref Working Group reaches consensus in additional areas.
+
+4.  Design
+
+4.1.  The Policy Token
+
+   This document defines the policy token __usage_ai-training.
+
+   The policy token conforms to the product-token syntax in
+   Section 2.2.1 of [ROBOTS] (letters, _, -).
+
+   Consumers MUST match policy tokens exactly, apart from case, as for
+   any product token.  (Note that some deployed parsers match more
+   flexibly; the __ prefix makes accidental matches unlikely.)
+
+   A single group MAY name several policy tokens (consecutive User-Agent
+   lines; Section 2.2 of [ROBOTS]) to bind its rules to several
+   purposes.  Policy tokens and other product tokens MAY be mixed in a
+   group.
+
+4.2.  Checking for Preferences
+
+   To determine whether a preference has been expressed for a given
+   path, a consumer looks up the path and policy-token combination as
+   specified in Sections 2.2.1 and 2.2.2 of [ROBOTS].
+
+   However, wildcard groups (i.e., User-Agent: *) MUST NOT be
+   interpreted as matching the policy token.
+
+   If the lookup finds that the path is disallowed, a preference against
+   the use described by the policy token has been expressed for that
+   path.  If it finds that the path is allowed, a preference in favor of
+   that use has been expressed.
+
+   If no group contains the __usage_ai-training policy token (i.e.,
+   there is no User-Agent: __usage_ai-training line in the file), then
+   no preference has been expressed.  If such a file contains a
+   proprietary policy token, consumers SHOULD interpret that token as
+   they would in the absence of this document, but MUST NOT treat it as
+   expressing a preference in the context of this document (see
+   Section 4.5).
+
+4.3.  Independence from Crawler Rules
+
+   Consumers MUST interpret the RFC 9309 signals being expressed based
+   on their own product token(s) exactly as they would in the absence of
+   this document.  That is, ExampleBot still checks whether there are
+   rules for ExampleBot; if there are, they still express the service
+   operator's preference about crawling.  Nothing in this document
+   changes that signaling.
+
+   Content-usage preferences and traffic management signals can both be
+   expressed in robots.txt, but they are independent and orthogonal.
+
+4.4.  Effects on Crawling Behavior
+
+   This policy token is not a directive for crawling behavior.
+
+   A consumer MAY use preferences to inform crawling.  For example, if
+   it crawls only for purposes covered by the policy token, it MAY
+   refrain from retrieving resources for which a preference against
+   those purposes has been expressed.
+
+   If a service operator wishes to limit crawling, it MAY use groups for
+   crawlers' product tokens in robots.txt to do so.
+
+4.5.  Precedence
+
+   Specific expressions SHOULD take precedence over general ones.
+
+   Consumers MAY document that they interpret rules that match
+   proprietary policy tokens as being more specific than the __usage_ai-
+   training policy token.
+
+   Private agreements MAY override preferences expressed via this
+   mechanism.
+
+5.  Security Considerations
+
+   The security considerations of Section 3 of [ROBOTS] apply to this
+   mechanism.
+
+6.  Privacy Considerations
+
+   This document does not introduce any new privacy considerations.
+
+7.  IANA Considerations
+
+   This document has no IANA actions.
+
+8.  References
+
+8.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [ROBOTS]   Koster, M., Illyes, G., Zeller, H., and L. Sassman,
+              "Robots Exclusion Protocol", RFC 9309,
+              DOI 10.17487/RFC9309, September 2022,
+              <https://www.rfc-editor.org/rfc/rfc9309>.
+
+   [VOCAB]    Keller, P. and M. Thomson, "A Vocabulary For Expressing AI
+              Usage Preferences", Work in Progress, Internet-Draft,
+              draft-ietf-aipref-vocab-08, 13 September 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-aipref-
+              vocab-08>.
+
+8.2.  Informative References
+
+   [ATTACH]   Illyes, G. and M. Thomson, "Associating AI Usage
+              Preferences with Content in HTTP", Work in Progress,
+              Internet-Draft, draft-ietf-aipref-attach-05, 18 August
+              2026, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              aipref-attach-05>.
+
+   [HTTP]     Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "HTTP Semantics", STD 97, RFC 9110,
+              DOI 10.17487/RFC9110, June 2022,
+              <https://www.rfc-editor.org/rfc/rfc9110>.
+
+Acknowledgments
+
+   The author is grateful to the Working Group's chairs, Mark Nottingham
+   (Cloudflare) and Suresh Krishnan (Cisco), to the editors of the
+   vocabulary draft, Martin Thomson (Mozilla) and Paul Keller (Open
+   Future), and to the responsible Area Director, Mike Bishop (Akamai),
+   whose incredible effort to facilitate discussion and endless patience
+   (in addition to their own individual contributions) have made the
+   Working Group's progress possible.
+
+   The author also thanks the following people for their substantial
+   contributions to shaping the Working Group's discussion and for their
+   partnership.  Affiliations are listed for identification only, since
+   IETF participants contribute as individuals.
+
+      +======================+=====================================+
+      | Name                 | Affiliation                         |
+      +======================+=====================================+
+      | Farzaneh Badiei      | Digital Medusa                      |
+      +----------------------+-------------------------------------+
+      | Lila Bailey          | Internet Archive                    |
+      +----------------------+-------------------------------------+
+      | Kevin Bankston       | Center for Democracy and Technology |
+      +----------------------+-------------------------------------+
+      | Fabrice Canel        | Microsoft                           |
+      +----------------------+-------------------------------------+
+      | Alissa Cooper        | Knight-Georgetown Institute         |
+      +----------------------+-------------------------------------+
+      | Sonia Cooper         | Microsoft                           |
+      +----------------------+-------------------------------------+
+      | Glenn Deen           | Comcast NBCUniversal                |
+      +----------------------+-------------------------------------+
+      | Caleb Donaldson      | Google                              |
+      +----------------------+-------------------------------------+
+      | Daniel Etcovitch     | Anthropic                           |
+      +----------------------+-------------------------------------+
+      | Christopher Flammang | Elsevier                            |
+      +----------------------+-------------------------------------+
+      | Max Gendler          | News Corp                           |
+      +----------------------+-------------------------------------+
+      | Alex Gibson          | News Corp                           |
+      +----------------------+-------------------------------------+
+      | Jordan Gimbel        | Microsoft                           |
+      +----------------------+-------------------------------------+
+      | Mark Gray            | OpenAI                              |
+      +----------------------+-------------------------------------+
+      | Nate Hake            | Travel Lemming                      |
+      +----------------------+-------------------------------------+
+      | Gary Illyes          | Google                              |
+      +----------------------+-------------------------------------+
+      | Meredith Jacob       | American University Washington      |
+      |                      | College of Law                      |
+      +----------------------+-------------------------------------+
+      | Mirja Kühlewind      | Ericsson                            |
+      +----------------------+-------------------------------------+
+      | Laurent Le Meur      | EDRLab                              |
+      +----------------------+-------------------------------------+
+      | Jo Levy              | Norton Law                          |
+      +----------------------+-------------------------------------+
+      | Greg Lindahl         | Common Crawl Foundation             |
+      +----------------------+-------------------------------------+
+      | Krishna Madhavan     | Microsoft                           |
+      +----------------------+-------------------------------------+
+      | Sarah McKenna        | Sequentum                           |
+      +----------------------+-------------------------------------+
+      | Angela Mills Wade    | European Publishers Council         |
+      +----------------------+-------------------------------------+
+      | John Mueller         | Google                              |
+      +----------------------+-------------------------------------+
+      | Chris Needham        | BBC                                 |
+      +----------------------+-------------------------------------+
+      | Elaine Newton        | Amazon Web Services                 |
+      +----------------------+-------------------------------------+
+      | Victoria Noble       | Electronic Frontier Foundation      |
+      +----------------------+-------------------------------------+
+      | Sebastian Posth      | Liccium                             |
+      +----------------------+-------------------------------------+
+      | Brendan Quinn        | IPTC                                |
+      +----------------------+-------------------------------------+
+      | Courtney Radsch      | Open Markets Institute              |
+      +----------------------+-------------------------------------+
+      | Felix Reda           | GitHub                              |
+      +----------------------+-------------------------------------+
+      | Eric Rescorla        | Independent                         |
+      +----------------------+-------------------------------------+
+      | Matt Rogerson        | Financial Times                     |
+      +----------------------+-------------------------------------+
+      | Leah Romm            | Cloudflare                          |
+      +----------------------+-------------------------------------+
+      | Leonard Rosenthol    | Adobe                               |
+      +----------------------+-------------------------------------+
+      | Malikat Rufai        | Meta                                |
+      +----------------------+-------------------------------------+
+      | Achim Schlosser      | Bertelsmann                         |
+      +----------------------+-------------------------------------+
+      | Rony Shalit          | Bright Data                         |
+      +----------------------+-------------------------------------+
+      | Bradley Silver       | Advance                             |
+      +----------------------+-------------------------------------+
+      | Erin Simon           | Google                              |
+      +----------------------+-------------------------------------+
+      | Esther Tetruashvily  | OpenAI                              |
+      +----------------------+-------------------------------------+
+      | Michael Tremante     | Cloudflare                          |
+      +----------------------+-------------------------------------+
+      | Thom Vaughan         | Common Crawl Foundation             |
+      +----------------------+-------------------------------------+
+      | James Whymark        | Meta                                |
+      +----------------------+-------------------------------------+
+      | Timid Robot Zehta    | Creative Commons                    |
+      +----------------------+-------------------------------------+
+
+                                 Table 1
+
+   Many more people shaped the Working Group's discussion than appear
+   above, and this list has almost certainly left out someone who
+   belongs on it.  Any such omission is inadvertent, and the author
+   apologizes in advance.
+
+Author's Address
+
+   Kevin Kelley
+   Anthropic
+   Email: kelleyk-ietf@kelleyk.net
