@@ -14,25 +14,25 @@ It introduces no new directive names and no new grammar: the path
 language, longest-match precedence, and group structure of  robots.txt 
 are not changed. 
     ' name="description">
-<meta content="xml2rfc 3.34.1" name="generator">
+<meta content="xml2rfc 3.35.0" name="generator">
 <meta content="robots.txt" name="keyword">
 <meta content="AI preferences" name="keyword">
 <meta content="AI training" name="keyword">
 <meta content="draft-kelley-aipref-training-preference-signal-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.1
-    Python 3.14.8
-    ConfigArgParse 1.8.0
+  xml2rfc 3.35.0
+    Python 3.14.10
+    ConfigArgParse 1.9.0
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.13.4
+    platformdirs 4.14.3
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.9.2
+    wcwidth 0.9.4
 -->
 <link href="draft-kelley-aipref-training-preference-signal.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1033,7 +1033,7 @@ svg {
   & :is([stroke="white"], [stroke^="#fff"]) {
     stroke: var(--background-color);
   }
-  & :is([fill="black"], [fill^="#000"], :not([fill])) {
+  & :is([fill="black"], [fill^="#000"], :not([fill], [fill] *)) {
     fill: var(--text-color);
   }
   & :is([fill="white"], [fill^="#fff"]) {
@@ -1048,11 +1048,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Training Preference Signal</td>
-<td class="right">October 2026</td>
+<td class="right">November 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Kelley</td>
-<td class="center">Expires 3 May 2027</td>
+<td class="center">Expires 17 May 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1065,12 +1065,12 @@ svg {
 <dd class="internet-draft">draft-kelley-aipref-training-preference-signal-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-10-30" class="published">30 October 2026</time>
+<time datetime="2026-11-13" class="published">13 November 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-05-03">3 May 2027</time></dd>
+<dd class="expires"><time datetime="2027-05-17">17 May 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1122,7 +1122,7 @@ are not changed.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 3 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 17 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1558,6 +1558,10 @@ Working Group's progress possible.<a href="#appendix-A-1" class="pilcrow">¶</a>
 contributions to shaping the Working Group's discussion and for their
 partnership.  Affiliations are listed for identification only, since
 IETF participants contribute as individuals.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+<p id="appendix-A-3">Acknowledgement in this section should not be taken to imply
+endorsement of, or contribution to, this individual draft; rather, it
+recognizes participation in the Working Group, whose work this draft
+directly builds on.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
 <table class="center" id="table-1">
         <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
 <thead>
@@ -1612,10 +1616,6 @@ IETF participants contribute as individuals.<a href="#appendix-A-2" class="pilcr
             <td class="text-left" rowspan="1" colspan="1">News Corp</td>
           </tr>
           <tr>
-            <td class="text-left" rowspan="1" colspan="1">Alex Gibson</td>
-            <td class="text-left" rowspan="1" colspan="1">News Corp</td>
-          </tr>
-          <tr>
             <td class="text-left" rowspan="1" colspan="1">Jordan Gimbel</td>
             <td class="text-left" rowspan="1" colspan="1">Microsoft</td>
           </tr>
@@ -1658,10 +1658,6 @@ IETF participants contribute as individuals.<a href="#appendix-A-2" class="pilcr
           <tr>
             <td class="text-left" rowspan="1" colspan="1">Sarah McKenna</td>
             <td class="text-left" rowspan="1" colspan="1">Sequentum</td>
-          </tr>
-          <tr>
-            <td class="text-left" rowspan="1" colspan="1">Angela Mills Wade</td>
-            <td class="text-left" rowspan="1" colspan="1">European Publishers Council</td>
           </tr>
           <tr>
             <td class="text-left" rowspan="1" colspan="1">John Mueller</td>
@@ -1753,10 +1749,10 @@ IETF participants contribute as individuals.<a href="#appendix-A-2" class="pilcr
           </tr>
         </tbody>
       </table>
-<p id="appendix-A-4">Many more people shaped the Working Group's discussion than appear
+<p id="appendix-A-5">Many more people shaped the Working Group's discussion than appear
 above, and this list has almost certainly left out someone who belongs
 on it.  Any such omission is inadvertent, and the author apologizes in
-advance.<a href="#appendix-A-4" class="pilcrow">¶</a></p>
+advance.<a href="#appendix-A-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">

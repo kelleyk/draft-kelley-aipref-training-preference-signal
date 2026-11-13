@@ -4,8 +4,8 @@
 
 AI Preferences                                                 K. Kelley
 Internet-Draft                                                 Anthropic
-Intended status: Standards Track                         30 October 2026
-Expires: 3 May 2027
+Intended status: Standards Track                        13 November 2026
+Expires: 17 May 2027
 
 
               Machine-Readable Training Preference Signal
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 May 2027.
+   This Internet-Draft will expire on 17 May 2027.
 
 Copyright Notice
 
@@ -340,6 +340,11 @@ Acknowledgments
    partnership.  Affiliations are listed for identification only, since
    IETF participants contribute as individuals.
 
+   Acknowledgement in this section should not be taken to imply
+   endorsement of, or contribution to, this individual draft; rather, it
+   recognizes participation in the Working Group, whose work this draft
+   directly builds on.
+
       +======================+=====================================+
       | Name                 | Affiliation                         |
       +======================+=====================================+
@@ -365,8 +370,6 @@ Acknowledgments
       +----------------------+-------------------------------------+
       | Max Gendler          | News Corp                           |
       +----------------------+-------------------------------------+
-      | Alex Gibson          | News Corp                           |
-      +----------------------+-------------------------------------+
       | Jordan Gimbel        | Microsoft                           |
       +----------------------+-------------------------------------+
       | Mark Gray            | OpenAI                              |
@@ -389,8 +392,6 @@ Acknowledgments
       | Krishna Madhavan     | Microsoft                           |
       +----------------------+-------------------------------------+
       | Sarah McKenna        | Sequentum                           |
-      +----------------------+-------------------------------------+
-      | Angela Mills Wade    | European Publishers Council         |
       +----------------------+-------------------------------------+
       | John Mueller         | Google                              |
       +----------------------+-------------------------------------+
