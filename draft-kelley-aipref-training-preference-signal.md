@@ -278,6 +278,11 @@ contributions to shaping the Working Group's discussion and for their
 partnership.  Affiliations are listed for identification only, since
 IETF participants contribute as individuals.
 
+Acknowledgement in this section should not be taken to imply
+endorsement of, or contribution to, this individual draft; rather, it
+recognizes participation in the Working Group, whose work this draft
+directly builds on.
+
 | Name                 | Affiliation                                   |
 |----------------------|-----------------------------------------------|
 | Farzaneh Badiei      | Digital Medusa                                |
@@ -291,7 +296,6 @@ IETF participants contribute as individuals.
 | Daniel Etcovitch     | Anthropic                                     |
 | Christopher Flammang | Elsevier                                      |
 | Max Gendler          | News Corp                                     |
-| Alex Gibson          | News Corp                                     |
 | Jordan Gimbel        | Microsoft                                     |
 | Mark Gray            | OpenAI                                        |
 | Nate Hake            | Travel Lemming                                |
@@ -303,7 +307,6 @@ IETF participants contribute as individuals.
 | Greg Lindahl         | Common Crawl Foundation                       |
 | Krishna Madhavan     | Microsoft                                     |
 | Sarah McKenna        | Sequentum                                     |
-| Angela Mills Wade    | European Publishers Council                   |
 | John Mueller         | Google                                        |
 | Chris Needham        | BBC                                           |
 | Elaine Newton        | Amazon Web Services                           |
