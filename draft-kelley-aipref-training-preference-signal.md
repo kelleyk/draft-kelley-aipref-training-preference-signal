@@ -281,7 +281,8 @@ IETF participants contribute as individuals.
 Acknowledgement in this section should not be taken to imply
 endorsement of, or contribution to, this individual draft; rather, it
 recognizes participation in the Working Group, whose work this draft
-directly builds on.
+directly builds on.  Some participants have asked to be excluded from
+this list.
 
 | Name                 | Affiliation                                   |
 |----------------------|-----------------------------------------------|
@@ -295,7 +296,6 @@ directly builds on.
 | Caleb Donaldson      | Google                                        |
 | Daniel Etcovitch     | Anthropic                                     |
 | Christopher Flammang | Elsevier                                      |
-| Max Gendler          | News Corp                                     |
 | Jordan Gimbel        | Microsoft                                     |
 | Mark Gray            | OpenAI                                        |
 | Nate Hake            | Travel Lemming                                |
